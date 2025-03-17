@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2015/06/nuspec.xsd">
+  <metadata>
+    <id>inform7</id>
+    <version>10.1.2</version>
+    <!-- <packageSourceUrl>https://github.com/johnwbyrd/chocolatey-inform7</packageSourceUrl>-->
+    <owners>John Byrd</owners>
+    <title>Inform</title>
+    <authors>Graham Nelson et al</authors>
+    <projectUrl>https://github.com/ganelson/inform</projectUrl>
+    <copyright>2022</copyright>
+    <licenseUrl>https://raw.githubusercontent.com/ganelson/inform/refs/heads/master/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <projectSourceUrl>https://github.com/ganelson/inform/</projectSourceUrl>
+    <docsUrl>https://ganelson.github.io/inform-website/doc/</docsUrl>
+    <!--<mailingListUrl></mailingListUrl>-->
+    <!--<bugTrackerUrl></bugTrackerUrl>-->
+    <tags>inform7 interactive fiction parser generator</tags>
+    <summary>The core software distribution for the Inform 7 programming language</summary>
+    <description>Inform is a programming language for creating interactive fiction, using natural language syntax.</description>
+  </metadata>
+  <files>
+    <file src="tools\**" target="tools" />
+  </files>
+</package>
