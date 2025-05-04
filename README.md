@@ -88,10 +88,10 @@ cmake --build build --target pack
 cmake --build build --target verify
 
 # Install the package locally
-cmake --build build --target install
+cmake --build build --target choco_install
 
 # Uninstall the package
-cmake --build build --target uninstall
+cmake --build build --target choco_uninstall
 
 # Push the package to Chocolatey.org (requires API key)
 cmake --build build --target push

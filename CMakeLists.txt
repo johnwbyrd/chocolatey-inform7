@@ -16,11 +16,11 @@ message(STATUS "Package version: ${PACKAGE_VERSION}")
 
 # Set package name, files, etc.
 set(PACKAGE_NAME "inform7")
-set(PACKAGE_FILE "${PACKAGE_NAME}.${PACKAGE_VERSION}.nupkg")
+set(PACKAGE_FILE "${CMAKE_BINARY_DIR}/${PACKAGE_NAME}.${PACKAGE_VERSION}.nupkg")
 
 # Add targets
 add_custom_target(pack
-    COMMAND ${CHOCO_EXECUTABLE} pack
+    COMMAND ${CHOCO_EXECUTABLE} pack --outputdirectory="${CMAKE_BINARY_DIR}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Building the Chocolatey package"
     VERBATIM
@@ -39,8 +39,8 @@ add_custom_target(verify
 )
 
 # Install package
-add_custom_target(install
-    COMMAND ${CHOCO_EXECUTABLE} install ${PACKAGE_NAME} -dv -s .
+add_custom_target(choco_install
+    COMMAND ${CHOCO_EXECUTABLE} install ${PACKAGE_NAME} -dv -s "${CMAKE_BINARY_DIR}"
     DEPENDS verify
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Installing the package locally"
@@ -48,9 +48,9 @@ add_custom_target(install
 )
 
 # Uninstall package
-add_custom_target(uninstall
+add_custom_target(choco_uninstall
     COMMAND ${CHOCO_EXECUTABLE} uninstall ${PACKAGE_NAME} -dv
-    DEPENDS install
+    DEPENDS choco_install
     COMMENT "Uninstalling the package"
     VERBATIM
 )
@@ -63,7 +63,7 @@ add_custom_target(push
             -DUSE_ENV_API_KEY=${USE_ENV_API_KEY}
             -DCHOCOLATEY_API_KEY=${CHOCOLATEY_API_KEY}
             -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/PushPackage.cmake
-    DEPENDS uninstall
+    DEPENDS choco_uninstall
     COMMENT "Pushing package to Chocolatey.org"
     VERBATIM
 )
