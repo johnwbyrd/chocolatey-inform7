@@ -8,7 +8,6 @@ $packageArgs = @{
   unzipLocation = $toolsDir
   fileType      = 'EXE' #only one of these: exe, msi, msu
   url           = $url
-  url64bit      = $url64
 
   softwareName  = 'Inform *'
 

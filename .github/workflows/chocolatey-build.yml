@@ -28,22 +28,6 @@ jobs:
       
       - name: Build and Test Package
         run: cmake --build build --target test_package
-      
-      # Verify that the package exists
-      - name: List Package Files
-        if: github.event_name != 'pull_request'
-        run: |
-          dir build\*.nupkg
-      
-      # Upload the built package as an artifact
-      - name: Upload Package Artifact
-        if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: choco-package
-          path: build/*.nupkg
-          if-no-files-found: error
-          overwrite: true
   
   publish:
     needs: build
@@ -52,18 +36,6 @@ jobs:
     environment: production  # Specify the production environment
     steps:
       - uses: actions/checkout@v3
-      
-      # Download the package artifact from the build job
-      - name: Download Package Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: choco-package
-          path: build
-      
-      # Verify that the package was downloaded
-      - name: List Package Files
-        run: |
-          dir build\*.nupkg
       
       - name: Install cmake and ninja
         run: |
