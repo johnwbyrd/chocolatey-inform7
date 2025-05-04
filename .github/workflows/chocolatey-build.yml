@@ -20,24 +20,20 @@ jobs:
           [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
           iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
       
-      - name: Set up CMake
-        uses: jwlawson/actions-setup-cmake@v1.13
-        with:
-          cmake-version: '3.20.x'
+      - name: Set up cmake and ninja
+        run: |
+          choco install cmake ninja -y
       
       - name: Configure CMake
-        run: cmake -B build
+        run: cmake -B build -G Ninja
       
       - name: Build and Test Package
-        run: |
-          cd build
-          cmake --build . --target choco_uninstall
+        run: cmake --build build --target choco_uninstall
       
       # Only run on main branch or tag push, not PRs
       - name: Publish Package
         if: github.event_name != 'pull_request'
         run: |
-          cd build
-          cmake --build . --target push
+          cmake --build build --target push
         env:
           CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }} 
