@@ -29,11 +29,15 @@ jobs:
         run: cmake -B build
       
       - name: Build and Test Package
-        run: cmake --build build --target all_steps
+        run: |
+          cd build
+          cmake --build build --target all_steps
       
       # Only run on main branch or tag push, not PRs
       - name: Publish Package
         if: github.event_name != 'pull_request'
-        run: cmake --build build --target push
+        run: |
+          cd build
+          cmake --build build --target push
         env:
           CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }} 
