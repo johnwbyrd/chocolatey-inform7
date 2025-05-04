@@ -13,8 +13,23 @@ else()
     endif()
 endif()
 
+# Register the API key with Chocolatey
+message(STATUS "Registering Chocolatey API key...")
 execute_process(
-    COMMAND ${CHOCO_EXECUTABLE} push ${PACKAGE_FILE} --source=https://push.chocolatey.org/ --api-key=${API_KEY}
+    COMMAND ${CHOCO_EXECUTABLE} apikey --key=${API_KEY} --source=https://push.chocolatey.org/
+    RESULT_VARIABLE APIKEY_RESULT
+    OUTPUT_VARIABLE APIKEY_OUTPUT
+    ERROR_VARIABLE APIKEY_ERROR
+)
+
+if(APIKEY_RESULT)
+    message(FATAL_ERROR "Failed to register API key: ${APIKEY_ERROR}")
+endif()
+
+# Now push the package to Chocolatey.org
+message(STATUS "Pushing package to Chocolatey.org...")
+execute_process(
+    COMMAND ${CHOCO_EXECUTABLE} push ${PACKAGE_FILE} --source=https://push.chocolatey.org/
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     RESULT_VARIABLE PUSH_RESULT
     OUTPUT_VARIABLE PUSH_OUTPUT

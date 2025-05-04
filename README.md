@@ -70,16 +70,11 @@ This repository includes a CMake-based workflow for automating the build, test, 
    ```
 
 2. Setting the Chocolatey API Key:
-
-   **Option 1: Environment Variable (Recommended)**
-   ```powershell
-   $env:CHOCOLATEY_API_KEY = "your-api-key-here"
-   ```
-
-   **Option 2: CMake Parameter**
-   ```powershell
-   cmake -B build -DUSE_ENV_API_KEY=OFF -DCHOCOLATEY_API_KEY="your-api-key-here"
-   ```
+   - For local development:
+     ```powershell
+     $env:CHOCOLATEY_API_KEY = "your-api-key-here"
+     ```
+   - For CI/CD, set it as a secret in your GitHub repository
 
 #### Available Targets
 
@@ -101,7 +96,7 @@ cmake --build build --target uninstall
 # Push the package to Chocolatey.org (requires API key)
 cmake --build build --target push
 
-# Run the full workflow (build→verify→install→uninstall→push)
+# Run the full workflow (build→verify→install→uninstall)
 cmake --build build --target all_steps
 ```
 
@@ -130,6 +125,38 @@ When a new version of Inform 7 is released:
 3. Update the checksum in `tools/chocolateyinstall.ps1` (use `Get-FileHash` to generate)
 4. Test the updated package
 5. Submit the updated package to the Chocolatey community repository
+
+## Continuous Integration
+
+This project uses GitHub Actions for continuous integration and deployment.
+
+### GitHub Actions Workflow
+
+The `.github/workflows/chocolatey-build.yml` file contains the CI/CD pipeline configuration:
+
+- **Trigger conditions**: 
+  - Push to `main` branch
+  - Push tags starting with `v`
+  - Pull requests to `main`
+  - Manual workflow dispatch
+
+- **Workflow steps**:
+  1. Set up a Windows environment
+  2. Install Chocolatey
+  3. Configure CMake
+  4. Build and test the package (`all_steps` target)
+  5. Publish to Chocolatey.org (only on `main` branch or tag push)
+
+### Setting up GitHub Actions
+
+To enable automated builds and publishing:
+
+1. Fork or clone this repository
+2. Go to your repository's Settings → Secrets → Actions
+3. Add a new repository secret named `CHOCOLATEY_API_KEY` with your Chocolatey API key
+4. Push to the `main` branch or create a tag to trigger a build and publish
+
+The API key is securely handled throughout the build process. The `push` target automatically registers your API key with Chocolatey before pushing the package.
 
 ## Publishing to Chocolatey
 
