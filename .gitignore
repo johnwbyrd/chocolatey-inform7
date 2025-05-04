@@ -1,0 +1,22 @@
+# Build directory
+build/
+
+# Chocolatey package files
+*.nupkg
+
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+
+# IDE files
+.vs/
+.vscode/
+.idea/
+*.swp
+*~
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini 

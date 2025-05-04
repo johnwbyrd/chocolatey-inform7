@@ -39,7 +39,7 @@ add_custom_target(verify
 )
 
 # Install package
-add_custom_target(install_package
+add_custom_target(install
     COMMAND ${CHOCO_EXECUTABLE} install ${PACKAGE_NAME} -dv -s .
     DEPENDS verify
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -48,9 +48,9 @@ add_custom_target(install_package
 )
 
 # Uninstall package
-add_custom_target(uninstall_package
+add_custom_target(uninstall
     COMMAND ${CHOCO_EXECUTABLE} uninstall ${PACKAGE_NAME} -dv
-    DEPENDS install_package
+    DEPENDS install
     COMMENT "Uninstalling the package"
     VERBATIM
 )
@@ -63,7 +63,7 @@ add_custom_target(push
             -DUSE_ENV_API_KEY=${USE_ENV_API_KEY}
             -DCHOCOLATEY_API_KEY=${CHOCOLATEY_API_KEY}
             -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/PushPackage.cmake
-    DEPENDS uninstall_package
+    DEPENDS uninstall
     COMMENT "Pushing package to Chocolatey.org"
     VERBATIM
 )
