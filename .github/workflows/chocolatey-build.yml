@@ -31,13 +31,13 @@ jobs:
       - name: Build and Test Package
         run: |
           cd build
-          cmake --build build --target all_steps
+          cmake --build . --target choco_uninstall
       
       # Only run on main branch or tag push, not PRs
       - name: Publish Package
         if: github.event_name != 'pull_request'
         run: |
           cd build
-          cmake --build build --target push
+          cmake --build . --target push
         env:
           CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }} 
