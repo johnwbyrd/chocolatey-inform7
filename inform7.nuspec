@@ -3,7 +3,7 @@
   <metadata>
     <id>inform7</id>
     <version>10.1.2</version>
-    <!-- <packageSourceUrl>https://github.com/johnwbyrd/chocolatey-inform7</packageSourceUrl>-->
+    <packageSourceUrl>https://github.com/johnwbyrd/chocolatey-inform7</packageSourceUrl>
     <owners>John Byrd</owners>
     <title>Inform</title>
     <authors>Graham Nelson et al</authors>

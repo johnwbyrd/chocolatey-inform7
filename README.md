@@ -78,9 +78,11 @@ This repository includes a CMake-based workflow for automating the build, test, 
 
 #### Available Targets
 
-Run any of these targets individually or use `all_steps` to run the complete workflow:
+Run any of these targets individually or use one of the combined workflow targets:
 
 ```powershell
+# Individual steps
+# ----------------
 # Build the project
 cmake --build build --target pack
 
@@ -96,7 +98,12 @@ cmake --build build --target choco_uninstall
 # Push the package to Chocolatey.org (requires API key)
 cmake --build build --target push
 
-# Run the full workflow (build→verify→install→uninstall)
+# Combined workflows
+# -----------------
+# Complete testing workflow (build→verify→install→uninstall)
+cmake --build build --target test_package
+
+# Full workflow including publishing (test_package + push)
 cmake --build build --target all_steps
 ```
 
@@ -123,8 +130,14 @@ When a new version of Inform 7 is released:
 1. Update the version number in `inform7.nuspec`
 2. Update the download URL in `tools/chocolateyinstall.ps1`
 3. Update the checksum in `tools/chocolateyinstall.ps1` (use `Get-FileHash` to generate)
-4. Test the updated package
-5. Submit the updated package to the Chocolatey community repository
+4. Test the updated package:
+   ```powershell
+   cmake --build build --target test_package
+   ```
+5. Publish the package:
+   ```powershell
+   cmake --build build --target push
+   ```
 
 ## Continuous Integration
 
@@ -140,21 +153,27 @@ The `.github/workflows/chocolatey-build.yml` file contains the CI/CD pipeline co
   - Pull requests to `main`
   - Manual workflow dispatch
 
-- **Workflow steps**:
-  1. Set up a Windows environment
-  2. Install Chocolatey
-  3. Configure CMake
-  4. Build and test the package (`all_steps` target)
-  5. Publish to Chocolatey.org (only on `main` branch or tag push)
+- **Job: build**
+  - Runs on all branches and PRs
+  - Tests the package with `test_package` target
+  - Uploads the .nupkg as an artifact if not a PR
+
+- **Job: publish**
+  - Only runs on `main` branch or tag pushes
+  - Uses the `production` environment 
+  - Downloads the built package artifact
+  - Pushes to Chocolatey.org using the `push` target
 
 ### Setting up GitHub Actions
 
 To enable automated builds and publishing:
 
 1. Fork or clone this repository
-2. Go to your repository's Settings → Secrets → Actions
-3. Add a new repository secret named `CHOCOLATEY_API_KEY` with your Chocolatey API key
-4. Push to the `main` branch or create a tag to trigger a build and publish
+2. Go to your repository's Settings → Environments
+3. Create a new environment named `production`
+4. Configure branch protection rules (limit to `main`)
+5. Add a repository secret named `CHOCOLATEY_API_KEY` with your Chocolatey API key
+6. Push to the `main` branch or create a tag to trigger a build and publish
 
 The API key is securely handled throughout the build process. The `push` target automatically registers your API key with Chocolatey before pushing the package.
 

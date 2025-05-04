@@ -55,6 +55,13 @@ add_custom_target(choco_uninstall
     VERBATIM
 )
 
+# Testing target for CI - executes the full test cycle without pushing
+add_custom_target(test_package
+    DEPENDS choco_uninstall
+    COMMENT "Testing the package (build→verify→install→uninstall)"
+    VERBATIM
+)
+
 # Push to chocolatey.org
 add_custom_target(push
     COMMAND ${CMAKE_COMMAND}
@@ -72,4 +79,6 @@ add_custom_target(push
 add_custom_target(all_steps DEPENDS push)
 
 # All done message
-message(STATUS "CMake configuration complete. Run 'cmake --build . --target all_steps' to build, verify, install, uninstall, and push the package.") 
+message(STATUS "CMake configuration complete.")
+message(STATUS "- Run 'cmake --build . --target test_package' to build, verify, install, and uninstall the package")
+message(STATUS "- Run 'cmake --build . --target all_steps' to test and publish the package") 

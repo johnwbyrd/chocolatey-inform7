@@ -14,13 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Install Chocolatey
-        run: |
-          Set-ExecutionPolicy Bypass -Scope Process -Force
-          [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072
-          iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-      
-      - name: Set up cmake and ninja
+      - name: Install cmake and ninja
         run: |
           choco install cmake ninja -y
       
@@ -28,12 +22,40 @@ jobs:
         run: cmake -B build -G Ninja
       
       - name: Build and Test Package
-        run: cmake --build build --target choco_uninstall
+        run: cmake --build build --target test_package
       
-      # Only run on main branch or tag push, not PRs
-      - name: Publish Package
+      # Upload the built package as an artifact
+      - name: Upload Package Artifact
         if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v3
+        with:
+          name: choco-package
+          path: build/inform7.*.nupkg
+          retention-days: 1
+  
+  publish:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: windows-latest
+    environment: production  # Specify the production environment
+    steps:
+      - uses: actions/checkout@v3
+      
+      # Download the package artifact from the build job
+      - name: Download Package Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: choco-package
+          path: build
+      
+      - name: Install cmake and ninja
         run: |
-          cmake --build build --target push
+          choco install cmake ninja -y
+      
+      - name: Configure CMake
+        run: cmake -B build -G Ninja
+      
+      - name: Publish Package
+        run: cmake --build build --target push
         env:
           CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }} 
