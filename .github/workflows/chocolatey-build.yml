@@ -8,6 +8,11 @@ on:
     branches: [ main ]
   workflow_dispatch:  # Allow manual triggering
 
+# Sets permissions of the GITHUB_TOKEN
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -24,14 +29,21 @@ jobs:
       - name: Build and Test Package
         run: cmake --build build --target test_package
       
+      # Verify that the package exists
+      - name: List Package Files
+        if: github.event_name != 'pull_request'
+        run: |
+          dir build\*.nupkg
+      
       # Upload the built package as an artifact
       - name: Upload Package Artifact
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: choco-package
-          path: build/inform7.*.nupkg
-          retention-days: 1
+          path: build/*.nupkg
+          if-no-files-found: error
+          overwrite: true
   
   publish:
     needs: build
@@ -43,10 +55,15 @@ jobs:
       
       # Download the package artifact from the build job
       - name: Download Package Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: choco-package
           path: build
+      
+      # Verify that the package was downloaded
+      - name: List Package Files
+        run: |
+          dir build\*.nupkg
       
       - name: Install cmake and ninja
         run: |
