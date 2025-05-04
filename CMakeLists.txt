@@ -57,7 +57,7 @@ add_custom_target(choco_uninstall
 
 # Testing target for CI - executes the full test cycle without pushing
 add_custom_target(test_package
-    DEPENDS choco_uninstall
+    DEPENDS choco_install choco_uninstall
     COMMENT "Testing the package (build→verify→install→uninstall)"
     VERBATIM
 )
@@ -70,7 +70,7 @@ add_custom_target(push
             -DUSE_ENV_API_KEY=${USE_ENV_API_KEY}
             -DCHOCOLATEY_API_KEY=${CHOCOLATEY_API_KEY}
             -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/PushPackage.cmake
-    DEPENDS choco_uninstall
+    DEPENDS test_package
     COMMENT "Pushing package to Chocolatey.org"
     VERBATIM
 )

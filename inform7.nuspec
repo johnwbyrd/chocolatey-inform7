@@ -14,12 +14,31 @@
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <projectSourceUrl>https://github.com/ganelson/inform/</projectSourceUrl>
     <docsUrl>https://ganelson.github.io/inform-website/doc/</docsUrl>
-    <iconUrl>https://github.com/johnwbyrd/chocolatey-inform7/blob/main/icons/256x256.png?raw=true</iconUrl>
+    <iconUrl>https://cdn.jsdelivr.net/gh/johnwbyrd/chocolatey-inform7@main/icons/256x256.png</iconUrl>
     <!--<mailingListUrl></mailingListUrl>-->
     <!--<bugTrackerUrl></bugTrackerUrl>-->
     <tags>inform7 interactive fiction parser generator</tags>
     <summary>The core software distribution for the Inform 7 programming language</summary>
-    <description>Inform is a programming language for creating interactive fiction, using natural language syntax. Using natural language and drawing on ideas from linguistics and from literate programming, Inform is widely used as a medium for literary writing, as a prototyping tool in the games industry, and in education, both at school and university level (where Inform is often assigned material for courses on digital narrative). It has several times ranked in the top 100 most influential programming languages according to the TIOBE index. Created in April 2006, it was open-sourced in April 2022.</description>
+    <description>Inform is a programming language for creating interactive fiction, using natural
+      language syntax. Using natural language and drawing on ideas from linguistics and from
+      literate programming, Inform is widely used as a medium for literary writing, as a prototyping
+      tool in the games industry, and in education, both at school and university level (where
+      Inform is often assigned material for courses on digital narrative). It has several times
+      ranked in the top 100 most influential programming languages according to the TIOBE index.
+      Created in April 2006, it was open-sourced in April 2022.
+
+      ## Enhanced Features
+
+      This Chocolatey package includes additional features to improve usability:
+
+      - **Command-Line Access**: Automatically creates shims for the Inform compiler tools
+      (`inform7.exe`, `inform6.exe`, `inblorb.exe`, and `intest.exe`), allowing you to run them from
+      any command prompt.
+
+      - **Environment Variables**: Sets `INFORM_HOME` pointing to the Inform installation directory
+      and `INFORM7_INTERNAL` pointing to the Internal directory, making it easier to integrate with
+      other tools and scripts.
+    </description>
   </metadata>
   <files>
     <file src="tools\**" target="tools" />

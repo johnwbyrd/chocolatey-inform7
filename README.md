@@ -6,11 +6,34 @@ This repository contains a Chocolatey package for [Inform 7](https://inform7.com
 
 This package automates the installation of Inform 7 on Windows systems through the Chocolatey package manager. It downloads the official distribution from the Inform GitHub repository and performs a silent installation.
 
+## Enhanced Features
+
+The package includes these enhanced features for better usability:
+
+### Command-Line Shims
+
+Shims for the Inform compiler executables are automatically created in the Chocolatey bin folder:
+- `inform7.exe` - Main Inform 7 compiler
+- `inform6.exe` - Inform 6 compiler used by Inform 7
+- `inblorb.exe` - Blorb packager for Inform stories
+- `intest.exe` - Inform testing tool
+
+These shims allow you to run the Inform tools from any command line without needing to add the installation directory to your PATH.
+
+### Environment Variables
+
+Two environment variables are automatically set to help locate Inform components:
+- `INFORM_HOME` - Points to the root Inform installation directory (typically `C:\Program Files\Inform`)
+- `INFORM7_INTERNAL` - Points to the Internal directory within the Inform installation
+
+These variables can be used by other tools, scripts, or build systems that need to locate the Inform installation.
+
 ## Repository Structure
 
 - `inform7.nuspec`: Package metadata including version, description, and URLs
 - `tools/`: Chocolatey scripts
   - `chocolateyinstall.ps1`: Installation script
+  - `chocolateyuninstall.ps1`: Uninstallation script
 - `CMakeLists.txt`: Build system for testing and publishing
 - `cmake/`: CMake helper scripts
 - `.github/workflows/`: CI/CD configuration
@@ -22,6 +45,21 @@ This package automates the installation of Inform 7 on Windows systems through t
 - CMake 3.14 or higher
 - Chocolatey installed
 - PowerShell
+
+### Important: Administrator Rights Required
+
+**You must launch VS Code or Cursor with administrator privileges** when performing local installations or uninstallations of the package. This is required because:
+
+- Installing/uninstalling Chocolatey packages requires admin rights
+- Environment variables are set at the system level
+- Files are installed to protected directories
+
+To start VS Code/Cursor with admin rights:
+1. Right-click on the application icon
+2. Select "Run as administrator"
+3. Confirm the UAC prompt
+
+Failure to run with admin rights will result in permission errors during package installation/uninstallation.
 
 ### Build Targets
 
@@ -126,7 +164,9 @@ When testing the package, verify:
 
 - Installation completes without errors
 - The Inform 7 application launches correctly
-- Uninstallation removes all components
+- Command-line shims work correctly (test by running `inform7 --help` in a command prompt)
+- Environment variables are set correctly (verify with `echo %INFORM_HOME%` and `echo %INFORM7_INTERNAL%`)
+- Uninstallation removes all components, shims, and environment variables
 - Upgrading from previous versions works correctly
 
 ### Troubleshooting
@@ -134,6 +174,7 @@ When testing the package, verify:
 - Check Chocolatey logs: `%PROGRAMDATA%\chocolatey\logs\`
 - Use the `-dv` flag for verbose output
 - Run commands with administrator privileges
+- If shims don't work, check if the executables exist in the specified paths
 
 ## Publishing Process
 
