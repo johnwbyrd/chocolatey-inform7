@@ -67,8 +67,8 @@ $internalDir = Join-Path $inform7InstallDir "Internal"
 
 # Create environment variables with proper error handling
 try {
-    Install-ChocolateyEnvironmentVariable -VariableName "INFORM_HOME" -VariableValue $inform7InstallDir -VariableType 'Machine'
-    Write-Output -InputObject "Environment variable INFORM_HOME set to $inform7InstallDir"
+    Install-ChocolateyEnvironmentVariable -VariableName "INFORM7_HOME" -VariableValue $inform7InstallDir -VariableType 'Machine'
+    Write-Output -InputObject "Environment variable INFORM7_HOME set to $inform7InstallDir"
     
     if (Test-Path $internalDir) {
         Install-ChocolateyEnvironmentVariable -VariableName "INFORM7_INTERNAL" -VariableValue $internalDir -VariableType 'Machine'

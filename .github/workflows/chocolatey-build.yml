@@ -45,6 +45,6 @@ jobs:
         run: cmake -B build -G Ninja
 
       - name: Publish package to Chocolatey
-        run: cmake --build build --target push
+        run: cmake --build build --target all_steps
         env:
           CHOCOLATEY_API_KEY: ${{ secrets.CHOCOLATEY_API_KEY }}

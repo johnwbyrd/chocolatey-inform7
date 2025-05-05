@@ -56,7 +56,7 @@ add_custom_target(choco_uninstall
 
 # Testing target for CI - executes the full test cycle without pushing
 add_custom_target(test_package
-    DEPENDS choco_install choco_uninstall
+    DEPENDS choco_uninstall choco_install
     COMMENT "Testing the package (build→verify→install→uninstall)"
     VERBATIM
 )
@@ -75,7 +75,7 @@ add_custom_target(push
 )
 
 # Default target
-add_custom_target(all_steps DEPENDS push)
+add_custom_target(all_steps DEPENDS push test_package)
 
 # All done message
 message(STATUS "CMake configuration complete.")
