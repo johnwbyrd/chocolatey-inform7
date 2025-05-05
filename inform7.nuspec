@@ -32,10 +32,10 @@
       This Chocolatey package includes additional features to improve usability:
 
       - **Command-Line Access**: Automatically creates shims for the Inform compiler tools
-      (`inform7.exe`, `inform6.exe`, `inblorb.exe`, and `intest.exe`), allowing you to run them from
-      any command prompt.
+      (`inform7.exe`, `inform6.exe`, `inblorb.exe`, and `intest.exe`), as well as the Inform IDE
+      (`inform.exe`), allowing you to run them from any command prompt.
 
-      - **Environment Variables**: Sets `INFORM_HOME` pointing to the Inform installation directory
+      - **Environment Variables**: Sets `INFORM7_HOME` pointing to the Inform installation directory
       and `INFORM7_INTERNAL` pointing to the Internal directory, making it easier to integrate with
       other tools and scripts.
     </description>
