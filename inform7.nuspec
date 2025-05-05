@@ -27,9 +27,8 @@
       ranked in the top 100 most influential programming languages according to the TIOBE index.
       Created in April 2006, it was open-sourced in April 2022.
 
-      ## Enhanced Features
-
-      This Chocolatey package includes additional features to improve usability:
+      This Chocolatey package includes additional features to improve usability, especially in
+      automated builds and continuous integration/continuous deployment projects:
 
       - **Command-Line Access**: Automatically creates shims for the Inform compiler tools
       (`inform7.exe`, `inform6.exe`, `inblorb.exe`, and `intest.exe`), as well as the Inform IDE

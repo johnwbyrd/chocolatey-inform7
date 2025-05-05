@@ -17,17 +17,17 @@ $pp = Get-PackageParameters
 
 if ($pp.ContainsKey('D')) {
     $inform7InstallDir = $pp['D']
-    Write-Output "Using user-specified installation directory: $inform7InstallDir"
+    Write-Host "Using user-specified installation directory: $inform7InstallDir"
 } else {
     $packagePath = Get-ChocolateyPath PackagePath
     $inform7InstallDir = $packagePath
-    Write-Output "Using Chocolatey default installation directory: $inform7InstallDir"
+    Write-Host "Using Chocolatey default installation directory: $inform7InstallDir"
 }
 
 # Ensure parent directory exists before installation
 $parentDir = Split-Path -Parent $inform7InstallDir
 if (-not (Test-Path $parentDir)) {
-    Write-Output "Creating parent directory $parentDir"
+    Write-Host "Creating parent directory $parentDir"
     New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
 }
 
@@ -47,24 +47,26 @@ $packageArgs = @{
 }
 
 # Extract the installer from the ZIP archive
+Write-Host "Downloading and extracting Inform 7 installer..."
 Install-ChocolateyZipPackage @packageArgs
 
 # Run the installer with the specified parameters
+Write-Host "Installing Inform 7..."
 $packageArgs.file = Join-Path -Path $toolsDir -ChildPath $setupName
 Install-ChocolateyInstallPackage @packageArgs
 
 # Set environment variables for integration with external tools and scripts
-Write-Output -InputObject "Setting up Inform environment variables..."
+Write-Host "Setting up Inform environment variables..."
 
 $internalDir = Join-Path $inform7InstallDir "Internal"
 
 try {
     Install-ChocolateyEnvironmentVariable -VariableName "INFORM7_HOME" -VariableValue $inform7InstallDir -VariableType 'Machine'
-    Write-Output -InputObject "Environment variable INFORM7_HOME set to $inform7InstallDir"
+    Write-Host "Environment variable INFORM7_HOME set to $inform7InstallDir"
     
     if (Test-Path $internalDir) {
         Install-ChocolateyEnvironmentVariable -VariableName "INFORM7_INTERNAL" -VariableValue $internalDir -VariableType 'Machine'
-        Write-Output -InputObject "Environment variable INFORM7_INTERNAL set to $internalDir"
+        Write-Host "Environment variable INFORM7_INTERNAL set to $internalDir"
     } else {
         Write-Warning "Internal directory not found at $internalDir - INFORM7_INTERNAL environment variable was not set."
     }
@@ -73,10 +75,11 @@ try {
     Write-Warning "This may occur if the script is not running with administrative privileges."
 }
 
-Write-Output -InputObject "Inform 7 environment variables set."
+Write-Host "Inform 7 environment variables set."
 
 # Configure selective shimming for executables
 Write-Host "Setting up selective shimming for Inform7..."
+
 Write-Host "Inform7 installation directory: $inform7InstallDir"
 
 # Identify directories where executables should be shimmed
@@ -113,3 +116,4 @@ foreach ($exe in $allExes) {
 }
 
 Write-Host "Selective shimming setup completed."
+Write-Output "Inform 7 installation completed successfully."

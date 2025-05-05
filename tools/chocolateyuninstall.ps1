@@ -27,7 +27,7 @@ if ($key.Count -eq 1) {
             file           = "$($_.UninstallString)"
         }
 
-        Write-Output -InputObject "Running Inform 7 uninstaller..."
+        Write-Host "Running Inform 7 uninstaller..."
         Uninstall-ChocolateyPackage @packageArgs
     }
 } elseif ($key.Count -eq 0) {
@@ -38,21 +38,23 @@ if ($key.Count -eq 1) {
 }
 
 # Let Chocolatey handle shim removal automatically
-Write-Output -InputObject "Chocolatey will automatically remove shims during uninstallation..."
+Write-Host "Chocolatey will automatically remove shims during uninstallation..."
 
 # Clean up environment variables created during installation
-Write-Output -InputObject "Removing Inform 7 environment variables..."
+Write-Host "Removing Inform 7 environment variables..."
 
 try {
     Uninstall-ChocolateyEnvironmentVariable -VariableName "INFORM7_HOME" -VariableType 'Machine'
-    Write-Output -InputObject "Environment variable INFORM7_HOME removed"
+    Write-Host "Environment variable INFORM7_HOME removed"
     
     Uninstall-ChocolateyEnvironmentVariable -VariableName "INFORM7_INTERNAL" -VariableType 'Machine'
-    Write-Output -InputObject "Environment variable INFORM7_INTERNAL removed"
+    Write-Host "Environment variable INFORM7_INTERNAL removed"
 } catch {
     Write-Warning "Failed to remove environment variables. This may occur if the script is not running with administrative privileges."
 }
 
 # Perform final cleanup operations
 Write-Host "Cleaning up any remaining files..."
+
 Write-Host "Uninstallation complete."
+Write-Output "Inform 7 has been successfully uninstalled."
