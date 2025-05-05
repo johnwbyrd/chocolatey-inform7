@@ -3,6 +3,28 @@ $toolsDir = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)"
 $url = 'https://github.com/ganelson/inform/releases/download/v10.1.2/Inform_10_1_2_Windows.zip' # download url, HTTPS preferred
 $setupName = 'Inform_10_1_2_Windows.exe'
 
+# Parse package parameters
+$pp = Get-PackageParameters
+
+# Determine installation directory
+if ($pp.ContainsKey('D')) {
+    # User specified a path with /D parameter
+    $inform7InstallDir = $pp['D']
+    Write-Output "Using user-specified installation directory: $inform7InstallDir"
+} else {
+    # No path specified, use Chocolatey's default location
+    $packagePath = Get-ChocolateyPath PackagePath
+    $inform7InstallDir = $packagePath
+    Write-Output "Using Chocolatey default installation directory: $inform7InstallDir"
+}
+
+# Make sure parent directory exists
+$parentDir = Split-Path -Parent $inform7InstallDir
+if (-not (Test-Path $parentDir)) {
+    Write-Output "Creating parent directory $parentDir"
+    New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+}
+
 $packageArgs = @{
     packageName    = $env:ChocolateyPackageName
     unzipLocation  = $toolsDir
@@ -13,10 +35,11 @@ $packageArgs = @{
 
     checksum       = '4DC80A37CF9DE1C0FFA9FD4B9E9BAD93479E844D4A1BE19DAC17BEC38BE63CBA'
     checksumType   = 'sha256'
-    silentArgs     = '/S'           # NSIS
+    # The /D parameter must be the last parameter for NSIS
+    # Do not quote the path, even if it contains spaces
+    silentArgs     = "/S /D=$inform7InstallDir"
     validExitCodes = @(0) 
 }
-
 
 Install-ChocolateyZipPackage @packageArgs # https://docs.chocolatey.org/en-us/create/functions/install-chocolateyzippackage
 
@@ -30,31 +53,6 @@ Install-ChocolateyInstallPackage @packageArgs
 #############################################################################
 
 Write-Output -InputObject "Creating shims for Inform compiler executables..."
-
-# Standard installation directory for Inform
-$inform7InstallDir = Join-Path $env:ProgramFiles "Inform"
-$compilerDir = Join-Path $inform7InstallDir "Compilers"
-
-# Function to create a shim with error handling
-function Create-Inform7Shim {
-    param (
-        [string]$Name,
-        [string]$Path
-    )
-    
-    if (Test-Path $Path) {
-        Write-Output -InputObject "Creating shim for $Name at $Path"
-        Install-BinFile -Name $Name -Path $Path
-    } else {
-        Write-Warning "Executable not found at $Path - shim for $Name was not created."
-    }
-}
-
-# Create shims for the compiler executables with proper error handling
-Create-Inform7Shim -Name "inblorb" -Path (Join-Path $compilerDir "inblorb.exe")
-Create-Inform7Shim -Name "inform6" -Path (Join-Path $compilerDir "inform6.exe")
-Create-Inform7Shim -Name "inform7" -Path (Join-Path $compilerDir "inform7.exe")
-Create-Inform7Shim -Name "intest" -Path (Join-Path $compilerDir "intest.exe")
 
 #############################################################################
 # ENHANCEMENT: Set environment variables for Inform                         #

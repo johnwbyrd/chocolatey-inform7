@@ -50,7 +50,6 @@ add_custom_target(choco_install
 # Uninstall package
 add_custom_target(choco_uninstall
     COMMAND ${CHOCO_EXECUTABLE} uninstall ${PACKAGE_NAME} -dv
-    DEPENDS choco_install
     COMMENT "Uninstalling the package"
     VERBATIM
 )

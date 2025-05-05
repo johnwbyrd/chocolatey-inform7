@@ -28,6 +28,19 @@ Two environment variables are automatically set to help locate Inform components
 
 These variables can be used by other tools, scripts, or build systems that need to locate the Inform installation.
 
+### Custom Installation Directory
+
+You can specify a custom installation directory when installing the package:
+
+```powershell
+choco install inform7 --params "'/D:C:\custom\path'"
+```
+
+If no directory is specified, Chocolatey will install Inform 7 to the default tools location, typically:
+- `$env:ChocolateyToolsLocation\Inform` (determined by Chocolatey)
+
+This allows you to control where the software is installed without modifying the package itself.
+
 ## Repository Structure
 
 - `inform7.nuspec`: Package metadata including version, description, and URLs
