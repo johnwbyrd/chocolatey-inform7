@@ -25,7 +25,7 @@ choco install inform7
 With custom installation directory:
 
 ```powershell
-choco install inform7 --ia "'/D:C:\custom\path'"
+choco install inform7 --ia "/D:C:\custom\path"
 ```
 
 If no directory is specified, Chocolatey will install Inform 7 to the default Chocolatey location, typically `$env:ChocolateyToolsLocation\inform7`.
@@ -42,7 +42,11 @@ The following executables from the root and Compilers directories are automatica
 
 ```powershell
 # Check if a command-line tool is available
+inform
 inform7 --help
+inform6 --help
+inblorb --help
+intest --help
 ```
 
 ### Environment Variables
@@ -85,7 +89,7 @@ The CMake build system provides several targets:
 
 ```powershell
 # Configure the project
-cmake -B build
+cmake -B build -G Ninja
 
 # Test the full package installation cycle
 cmake --build build --target test_package
@@ -93,8 +97,9 @@ cmake --build build --target test_package
 # Individual operations are also available:
 # - pack: Build the package
 # - verify: Check package for errors
-# - choco_install: Install locally
-# - choco_uninstall: Remove package
+# - choco_install: Build, verify, install locally
+# - choco_uninstall: Build, verify, install locally, uninstall
+# - choco_uninstall_no_dependencies: Uninstall without installing first
 # - push: Publish to Chocolatey.org
 # - all_tests: Run the entire build/install/uninstall/push cycle
 ```
