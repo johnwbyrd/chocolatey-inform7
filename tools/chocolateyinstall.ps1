@@ -15,6 +15,9 @@ $setupName = 'Inform_10_1_2_Windows.exe'
 # Get package parameters to determine installation location
 $pp = Get-PackageParameters
 
+# Determine if we're using a custom location
+$usingCustomLocation = $null -ne $pp.InstallLocation
+
 if ($pp.InstallLocation) {
     $inform7InstallDir = $pp.InstallLocation
     Write-Host "Using package parameter specified installation directory: $inform7InstallDir"
@@ -88,6 +91,7 @@ Write-Host "Finding all executables in the installation directory..."
 $allExes = Get-ChildItem $inform7InstallDir -Include *.exe -Recurse
 $shimCount = 0
 $ignoreCount = 0
+$manualShimCount = 0
 
 # Apply selective shimming based on explicit rules
 Write-Host "Applying selective shimming rules..."
@@ -95,6 +99,7 @@ foreach ($exe in $allExes) {
     $exePath = $exe.FullName
     $exeDir = Split-Path $exePath -Parent
     $exeName = Split-Path $exePath -Leaf
+    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($exeName)
     
     # Determine if we should create a shim
     $createShim = $false
@@ -119,6 +124,14 @@ foreach ($exe in $allExes) {
         } else {
             Write-Host "Creating console shim for $exeName"
         }
+        
+        # Only manually create shims when using a custom location
+        if ($usingCustomLocation) {
+            Install-BinFile -Name $baseName -Path $exePath
+            Write-Host "Created manual shim for $baseName using Install-BinFile"
+            $manualShimCount++
+        }
+        
         $shimCount++
     } else {
         # Create a .ignore file to prevent shimming
@@ -128,5 +141,10 @@ foreach ($exe in $allExes) {
     }
 }
 
-Write-Host "Selective shimming complete. Created $shimCount shims, ignored $ignoreCount executables."
+$summaryMessage = "Selective shimming complete. Created $shimCount shims, ignored $ignoreCount executables."
+if ($usingCustomLocation) {
+    $summaryMessage += " Created $manualShimCount manual shims for custom installation location."
+}
+Write-Host $summaryMessage
+
 Write-Output "Inform 7 installation completed successfully."

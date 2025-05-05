@@ -4,8 +4,9 @@
 # 1. Detects the Inform 7 installation from the Windows registry
 # 2. Runs the application's uninstaller with silent parameters
 # 3. Cleans up environment variables created during installation
-# 4. Allows Chocolatey to automatically handle shim removal
-# 5. Performs final cleanup operations
+# 4. Cleans up any manual shims created during installation
+# 5. Allows Chocolatey to automatically handle shim removal
+# 6. Performs final cleanup operations
 
 $ErrorActionPreference = 'Stop'
 
@@ -37,8 +38,29 @@ if ($key.Count -eq 1) {
     Write-Warning "To prevent accidental data loss, no automatic uninstallation will be performed."
 }
 
-# Let Chocolatey handle shim removal automatically
-Write-Host "Chocolatey will automatically remove shims during uninstallation..."
+# Clean up any manual shims created with Install-BinFile
+# These need to be cleaned up especially for custom installations
+Write-Host "Removing manual shims..."
+$binFilesToRemove = @(
+    "Inform",
+    "inform7",
+    "inform6",
+    "inblorb",
+    "intest"
+)
+
+foreach ($binFile in $binFilesToRemove) {
+    try {
+        Uninstall-BinFile -Name $binFile
+        Write-Host "Removed manual shim for $binFile"
+    } catch {
+        $errorMessage = $_.Exception.Message
+        Write-Warning "Could not remove manual shim for $binFile. Error: $errorMessage"
+    }
+}
+
+# Let Chocolatey handle automatic shim removal
+Write-Host "Chocolatey will automatically remove standard shims during uninstallation..."
 
 # Clean up environment variables created during installation
 Write-Host "Removing Inform 7 environment variables..."
