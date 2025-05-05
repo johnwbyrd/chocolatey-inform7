@@ -80,40 +80,53 @@ Write-Host "Inform 7 environment variables set."
 # Configure selective shimming for executables
 Write-Host "Setting up selective shimming for Inform7..."
 
-Write-Host "Inform7 installation directory: $inform7InstallDir"
-
 # Identify directories where executables should be shimmed
 $rootDir = $inform7InstallDir
 $compilersDir = Join-Path $inform7InstallDir "Compilers"
 
 Write-Host "Finding all executables in the installation directory..."
 $allExes = Get-ChildItem $inform7InstallDir -Include *.exe -Recurse
+$shimCount = 0
+$ignoreCount = 0
 
-# Apply .ignore files to prevent shimming of executables not in allowed directories
-# and .gui files to properly handle GUI applications
-Write-Host "Applying .ignore files to control shimming..."
+# Apply selective shimming based on explicit rules
+Write-Host "Applying selective shimming rules..."
 foreach ($exe in $allExes) {
     $exePath = $exe.FullName
     $exeDir = Split-Path $exePath -Parent
+    $exeName = Split-Path $exePath -Leaf
     
-    if ($exeDir -ne $rootDir -and $exeDir -ne $compilersDir) {
-        Write-Host "Creating .ignore file for $exePath"
-        New-Item "$exePath.ignore" -Type File -Force | Out-Null
-    } else {
-        Write-Host "Allowing shim for $exePath"
-        
-        # Detect GUI applications and create appropriate .gui files
-        try {
-            $binaryType = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($exePath).FileType
-            if ($binaryType -eq "Application") {
-                Write-Host "Creating .gui file for $exePath"
-                New-Item "$exePath.gui" -Type File -Force | Out-Null
-            }
-        } catch {
-            Write-Host "Could not determine if $exePath is a GUI app. Treating as console app."
+    # Determine if we should create a shim
+    $createShim = $false
+    $isGui = $false
+    
+    # Rule 1: Inform.exe in root directory gets a shim and is GUI
+    if (($exeDir -eq $rootDir) -and ($exeName -eq "Inform.exe")) {
+        $createShim = $true
+        $isGui = $true
+    }
+    # Rule 2: Executables in Compilers directory get shims as console applications
+    elseif ($exeDir -eq $compilersDir) {
+        $createShim = $true
+    }
+    
+    # Apply the appropriate files based on rules
+    if ($createShim) {
+        if ($isGui) {
+            # Create a .gui file for GUI applications
+            New-Item "$exePath.gui" -Type File -Force | Out-Null
+            Write-Host "Creating GUI shim for $exeName"
+        } else {
+            Write-Host "Creating console shim for $exeName"
         }
+        $shimCount++
+    } else {
+        # Create a .ignore file to prevent shimming
+        New-Item "$exePath.ignore" -Type File -Force | Out-Null
+        Write-Host "Preventing shim for $exeName"
+        $ignoreCount++
     }
 }
 
-Write-Host "Selective shimming setup completed."
+Write-Host "Selective shimming complete. Created $shimCount shims, ignored $ignoreCount executables."
 Write-Output "Inform 7 installation completed successfully."

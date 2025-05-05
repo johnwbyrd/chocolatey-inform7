@@ -50,13 +50,21 @@ add_custom_target(choco_install
 # Uninstall package
 add_custom_target(choco_uninstall
     COMMAND ${CHOCO_EXECUTABLE} uninstall ${PACKAGE_NAME} -dv
+    DEPENDS choco_install
+    COMMENT "Uninstalling the package"
+    VERBATIM
+)
+
+# Uninstall package without building dependencies  
+add_custom_target(choco_uninstall_no_dependencies
+    COMMAND ${CHOCO_EXECUTABLE} uninstall ${PACKAGE_NAME} -dv
     COMMENT "Uninstalling the package"
     VERBATIM
 )
 
 # Testing target for CI - executes the full test cycle without pushing
 add_custom_target(test_package
-    DEPENDS choco_uninstall choco_install
+    DEPENDS choco_install choco_uninstall
     COMMENT "Testing the package (build→verify→install→uninstall)"
     VERBATIM
 )
