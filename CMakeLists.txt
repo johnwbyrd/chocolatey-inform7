@@ -20,28 +20,16 @@ set(PACKAGE_FILE "${CMAKE_BINARY_DIR}/${PACKAGE_NAME}.${PACKAGE_VERSION}.nupkg")
 
 # Add targets
 add_custom_target(pack
-    COMMAND ${CHOCO_EXECUTABLE} pack --outputdirectory="${CMAKE_BINARY_DIR}"
+    COMMAND ${CHOCO_EXECUTABLE} pack --fail-on-stderr --outputdirectory="${CMAKE_BINARY_DIR}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Build the Chocolatey package"
-    VERBATIM
-)
-
-# Verify no errors/warnings in build
-add_custom_target(verify
-    COMMAND ${CMAKE_COMMAND} -E echo "Verifying package has no errors or warnings"
-    COMMAND ${CMAKE_COMMAND}
-            -DCHOCO_EXECUTABLE=${CHOCO_EXECUTABLE}
-            -DPACKAGE_FILE=${PACKAGE_FILE}
-            -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/VerifyPackage.cmake
-    DEPENDS pack
-    COMMENT "Verify package validity"
     VERBATIM
 )
 
 # Install package
 add_custom_target(choco_install
     COMMAND ${CHOCO_EXECUTABLE} install ${PACKAGE_NAME} -dv -s "${CMAKE_BINARY_DIR}"
-    DEPENDS verify
+    DEPENDS pack
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
     COMMENT "Build and install the package locally"
     VERBATIM
@@ -65,7 +53,7 @@ add_custom_target(choco_uninstall_no_dependencies
 # Testing target for CI - executes the full test cycle without pushing
 add_custom_target(test_package
     DEPENDS choco_install choco_uninstall
-    COMMENT "Test the package (build→verify→install→uninstall)"
+    COMMENT "Test the package (build→install→uninstall)"
     VERBATIM
 )
 
@@ -87,5 +75,5 @@ add_custom_target(all_steps DEPENDS push test_package)
 
 # All done message
 message(STATUS "CMake configuration complete.")
-message(STATUS "- Run 'cmake --build . --target test_package' to build, verify, install, and uninstall the package")
-message(STATUS "- Run 'cmake --build . --target all_steps' to test and publish the package") 
+message(STATUS "- Run 'cmake --build build --target test_package' to build, install, and uninstall the package")
+message(STATUS "- Run 'cmake --build build --target all_steps' to test and publish the package") 

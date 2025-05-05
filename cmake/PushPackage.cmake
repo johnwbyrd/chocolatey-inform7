@@ -45,4 +45,5 @@ if(PUSH_RESULT)
     message(FATAL_ERROR "Failed to push package: ${PUSH_ERROR}")
 endif()
 
+message(STATUS "${PUSH_OUTPUT}")
 message(STATUS "Successfully pushed package to Chocolatey.org") 

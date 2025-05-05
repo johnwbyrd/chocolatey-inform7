@@ -38,11 +38,15 @@
       and `INFORM7_INTERNAL` pointing to the Internal directory, making it easier to integrate with
       other tools and scripts.
 
-      - **Overridable installation location**: By default, the package installs to
-      `C:\ProgramData\chocolatey\lib\inform7`, but this can be overridden by passing the
-      `--ia "/D=C:\your\install\path" options to choco install:
+      - **Customizable Installation Location**: You can specify a custom installation directory
+      using
+      package parameters:
 
-      `choco install inform7 --ia "/D=C:\your\install\path"`
+      `choco install inform7 --params "/InstallLocation:C:\your\install\path"`
+
+      Paths with spaces are fully supported:
+
+      `choco install inform7 --params "/InstallLocation:C:\Program Files\Inform7"`
 
       - **Windows front end**: The package also installs the Windows front end, Inform for Windows,
       written by David Kinder. This is a simple GUI front end that makes it easier to work with

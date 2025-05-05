@@ -15,24 +15,14 @@
             "name": "Build Package",
             "type": "PowerShell",
             "request": "launch",
-            "script": "cmake --build build --target pack -G Ninja",
+            "script": "cmake --build build --target pack",
             "cwd": "${workspaceFolder}",
             "presentation": {
                 "clear": true
             }
         },
         {
-            "name": "Verify Package (Build→Verify)",
-            "type": "PowerShell",
-            "request": "launch",
-            "script": "cmake --build build --target verify",
-            "cwd": "${workspaceFolder}",
-            "presentation": {
-                "clear": true
-            }
-        },
-        {
-            "name": "Install Package (local) (Build→Verify→Install)",
+            "name": "Install Package (local) (Build→Install)",
             "type": "PowerShell",
             "request": "launch",
             "script": "cmake --build build --target choco_install",
@@ -52,7 +42,7 @@
             }
         },
         {
-            "name": "Test Package (Build→Verify→Install→Uninstall)",
+            "name": "Test Package (Build→Install→Uninstall)",
             "type": "PowerShell",
             "request": "launch",
             "script": "cmake --build build --target test_package",
@@ -82,7 +72,7 @@
             }
         },
         {
-            "name": "All Steps (Build→Verify→Install→Uninstall→Push)",
+            "name": "All Steps (Build→Install→Uninstall→Push)",
             "type": "PowerShell",
             "request": "launch",
             "script": "cmake --build build --target all_steps",

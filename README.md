@@ -25,7 +25,13 @@ choco install inform7
 With custom installation directory:
 
 ```powershell
-choco install inform7 --ia "/D:C:\custom\path"
+choco install inform7 --params "/InstallLocation:C:\custom\path"
+```
+
+Paths with spaces are fully supported:
+
+```powershell
+choco install inform7 --params "/InstallLocation:C:\Program Files\Inform7"
 ```
 
 If no directory is specified, Chocolatey will install Inform 7 to the default Chocolatey location, typically `$env:ChocolateyToolsLocation\inform7`.
@@ -96,9 +102,8 @@ cmake --build build --target test_package
 
 # Individual operations are also available:
 # - pack: Build the package
-# - verify: Check package for errors
-# - choco_install: Build, verify, install locally
-# - choco_uninstall: Build, verify, install locally, uninstall
+# - choco_install: Build, install locally
+# - choco_uninstall: Build, install locally, uninstall
 # - choco_uninstall_no_dependencies: Uninstall without installing first
 # - push: Publish to Chocolatey.org
 # - all_tests: Run the entire build/install/uninstall/push cycle
