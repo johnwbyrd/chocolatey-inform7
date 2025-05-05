@@ -1,0 +1,173 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Setup Build Environment",
+            "type": "shell",
+            "command": "if (Test-Path -Path 'build') { Remove-Item -Path 'build' -Recurse -Force; Write-Host 'Removed existing build directory' -ForegroundColor Yellow }; New-Item -ItemType Directory -Path 'build' -Force | Out-Null; cmake -B build",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Build Package",
+            "type": "shell",
+            "command": "cmake --build build --target pack",
+            "problemMatcher": [],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Verify Package",
+            "type": "shell",
+            "command": "cmake --build build --target verify",
+            "problemMatcher": [],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Install Package (local)",
+            "type": "shell",
+            "command": "cmake --build build --target choco_install",
+            "problemMatcher": [],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Uninstall Package",
+            "type": "shell",
+            "command": "cmake --build build --target choco_uninstall",
+            "problemMatcher": [],
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Test Package (Full Cycle)",
+            "type": "shell",
+            "command": "cmake --build build --target test_package",
+            "problemMatcher": [],
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Push to Chocolatey.org",
+            "type": "shell",
+            "command": "cmake --build build --target push",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Check Chocolatey API Key",
+            "type": "shell",
+            "command": "if (Test-Path env:CHOCOLATEY_API_KEY) { Write-Host 'CHOCOLATEY_API_KEY environment variable is set' -ForegroundColor Green } else { Write-Host 'CHOCOLATEY_API_KEY environment variable is NOT set' -ForegroundColor Red }",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Open Chocolatey Logs",
+            "type": "shell",
+            "command": "Start-Process \"$env:ProgramData\\chocolatey\\logs\"",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Clean Build Directory",
+            "type": "shell",
+            "command": "if (Test-Path -Path 'build') { Remove-Item -Path 'build' -Recurse -Force; Write-Host 'Build directory cleaned' -ForegroundColor Green } else { Write-Host 'No build directory to clean' -ForegroundColor Yellow }",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        },
+        {
+            "label": "Check Chocolatey Version",
+            "type": "shell",
+            "command": "choco --version",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": false,
+                "clear": true
+            }
+        }
+    ]
+} 

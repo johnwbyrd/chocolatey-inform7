@@ -1,0 +1,92 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Setup Build Environment",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "if (Test-Path -Path 'build') { Remove-Item -Path 'build' -Recurse -Force; Write-Host 'Removed existing build directory' -ForegroundColor Yellow }; New-Item -ItemType Directory -Path 'build' -Force | Out-Null; cmake -B build",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Build Package",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "cmake --build build --target pack",
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "name": "Verify Package",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "cmake --build build --target verify",
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "name": "Install Package (local)",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "cmake --build build --target choco_install",
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "name": "Uninstall Package",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "cmake --build build --target choco_uninstall",
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "name": "Test Package (Build→Verify→Install→Uninstall)",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "cmake --build build --target test_package",
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "name": "Push to Chocolatey.org (with ENV API Key)",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "if (-not (Test-Path env:CHOCOLATEY_API_KEY)) { Write-Error 'CHOCOLATEY_API_KEY environment variable not found. Please set it before pushing.'; exit 1 } else { cmake --build build --target push }",
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "name": "Set API Key and Push to Chocolatey.org",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "$apiKey = Read-Host -Prompt 'Enter your Chocolatey API key' -AsSecureString; $BSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($apiKey); $plainApiKey = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($BSTR); [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($BSTR); $env:CHOCOLATEY_API_KEY = $plainApiKey; Write-Host 'API Key set temporarily in environment'; cmake --build build --target push",
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "clear": true
+            }
+        },
+        {
+            "name": "All Steps (Test and Publish)",
+            "type": "PowerShell",
+            "request": "launch",
+            "script": "cmake --build build --target all_steps",
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "clear": true
+            }
+        }
+    ],
+} 

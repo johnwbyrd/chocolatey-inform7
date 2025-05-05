@@ -1,0 +1,48 @@
+{
+    "powershell.codeFormatting.autoCorrectAliases": true,
+    "powershell.codeFormatting.useCorrectCasing": true,
+    "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationAfterEveryPipeline",
+    "powershell.codeFormatting.preset": "OTBS",
+    "editor.formatOnSave": true,
+    "files.associations": {
+        "*.nuspec": "xml",
+        "*.ps1": "powershell"
+    },
+    "xml.format.preserveEmptyContent": true,
+    "xml.format.splitAttributes": "preserve",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "cmake.configureOnOpen": true,
+    "powershell.scriptAnalysis.enable": true,
+    "powershell.scriptAnalysis.settingsPath": ".vscode/PSScriptAnalyzerSettings.psd1",
+    "powershell.scriptAnalysis.excludePath": [
+        ".vscode/PSScriptAnalyzerSettings.psd1"
+    ],
+    "[powershell]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true
+    },
+    "[xml]": {
+        "editor.formatOnSave": true
+    },
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "*.nuspec": "${capture}.*.nupkg",
+        "CMakeLists.txt": "cmake_install.cmake, CMakeCache.txt, *.cmake"
+    },
+    "files.watcherExclude": {
+        "**/build/**": true
+    },
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/build": false  // Set to true to hide the build directory
+    },
+    "search.exclude": {
+        "**/build": true,
+        "**/*.nupkg": true
+    }
+} 

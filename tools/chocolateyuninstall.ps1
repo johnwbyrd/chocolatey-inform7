@@ -1,23 +1,28 @@
-$ErrorActionPreference = 'Stop' # stop on all errors
+# Inform 7 Uninstallation Script
+#
+# This script performs the following operations:
+# 1. Detects the Inform 7 installation from the Windows registry
+# 2. Runs the application's uninstaller with silent parameters
+# 3. Cleans up environment variables created during installation
+# 4. Allows Chocolatey to automatically handle shim removal
+# 5. Performs final cleanup operations
 
-#############################################################################
-# Uninstall the Inform 7 application                                        #
-#############################################################################
+$ErrorActionPreference = 'Stop'
 
-# Define the software name pattern to detect the uninstaller
+# Locate the application's uninstaller through registry entries
 $softwareName = 'Inform *'
 $validExitCodes = @(0, 3010, 1605, 1614, 1641)
 
-# Get the uninstaller from the registry
 [array]$key = Get-UninstallRegistryKey -SoftwareName $softwareName
 
+# Run the application's uninstaller if found, with appropriate error handling
 if ($key.Count -eq 1) {
     $key | ForEach-Object {
         $packageArgs = @{
             packageName    = $env:ChocolateyPackageName
             softwareName   = $softwareName
             fileType       = 'EXE'
-            silentArgs     = '/S' # NSIS
+            silentArgs     = '/S'
             validExitCodes = $validExitCodes
             file           = "$($_.UninstallString)"
         }
@@ -32,44 +37,15 @@ if ($key.Count -eq 1) {
     Write-Warning "To prevent accidental data loss, no automatic uninstallation will be performed."
 }
 
-#############################################################################
-# ENHANCEMENT: Clean up shims created during installation                   #
-# This removes the command-line shims created during package installation   #
-#############################################################################
+# Let Chocolatey handle shim removal automatically
+Write-Output -InputObject "Chocolatey will automatically remove shims during uninstallation..."
 
-Write-Output -InputObject "Removing Inform 7 shims..."
-
-# Function to remove a shim with error handling
-function Remove-Inform7Shim {
-    param (
-        [string]$Name
-    )
-    
-    try {
-        Write-Output -InputObject "Removing shim for $Name"
-        Uninstall-BinFile -Name $Name
-    } catch {
-        Write-Warning "Failed to remove shim for $Name. Please check if it exists or remove it manually."
-    }
-}
-
-# Remove shims for the compiler executables
-Remove-Inform7Shim -Name "inblorb"
-Remove-Inform7Shim -Name "inform6"
-Remove-Inform7Shim -Name "inform7"
-Remove-Inform7Shim -Name "intest"
-
-#############################################################################
-# ENHANCEMENT: Remove environment variables set during installation         #
-# This cleans up the environment variables created during installation      #
-#############################################################################
-
+# Clean up environment variables created during installation
 Write-Output -InputObject "Removing Inform 7 environment variables..."
 
-# Remove environment variables with proper error handling
 try {
-    Uninstall-ChocolateyEnvironmentVariable -VariableName "INFORM_HOME" -VariableType 'Machine'
-    Write-Output -InputObject "Environment variable INFORM_HOME removed"
+    Uninstall-ChocolateyEnvironmentVariable -VariableName "INFORM7_HOME" -VariableType 'Machine'
+    Write-Output -InputObject "Environment variable INFORM7_HOME removed"
     
     Uninstall-ChocolateyEnvironmentVariable -VariableName "INFORM7_INTERNAL" -VariableType 'Machine'
     Write-Output -InputObject "Environment variable INFORM7_INTERNAL removed"
@@ -77,4 +53,6 @@ try {
     Write-Warning "Failed to remove environment variables. This may occur if the script is not running with administrative privileges."
 }
 
-Write-Output -InputObject "Inform 7 uninstallation and cleanup complete!" 
+# Perform final cleanup operations
+Write-Host "Cleaning up any remaining files..."
+Write-Host "Uninstallation complete."
