@@ -9,6 +9,10 @@
 
 $ErrorActionPreference = 'Stop'
 $toolsDir = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)"
+
+# Import shared configuration
+. (Join-Path $toolsDir "inform7-config.ps1")
+
 $url = 'https://github.com/ganelson/inform/releases/download/v10.1.2/Inform_10_1_2_Windows.zip'
 $setupName = 'Inform_10_1_2_Windows.exe'
 
@@ -83,60 +87,49 @@ Write-Host "Inform 7 environment variables set."
 # Configure selective shimming for executables
 Write-Host "Setting up selective shimming for Inform7..."
 
-# Identify directories where executables should be shimmed
-$rootDir = $inform7InstallDir
-$compilersDir = Join-Path $inform7InstallDir "Compilers"
-
-Write-Host "Finding all executables in the installation directory..."
-$allExes = Get-ChildItem $inform7InstallDir -Include *.exe -Recurse
 $shimCount = 0
 $ignoreCount = 0
 $manualShimCount = 0
 
-# Apply selective shimming based on explicit rules
-Write-Host "Applying selective shimming rules..."
-foreach ($exe in $allExes) {
-    $exePath = $exe.FullName
-    $exeDir = Split-Path $exePath -Parent
-    $exeName = Split-Path $exePath -Leaf
-    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($exeName)
+# Apply shimming based on the configuration file
+foreach ($exePath in $Inform7ShimFiles.Keys) {
+    $isGui = $Inform7ShimFiles[$exePath]
+    $fullPath = Join-Path $inform7InstallDir $exePath
+    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($exePath)
     
-    # Determine if we should create a shim
-    $createShim = $false
-    $isGui = $false
-    
-    # Rule 1: Inform.exe in root directory gets a shim and is GUI
-    if (($exeDir -eq $rootDir) -and ($exeName -eq "Inform.exe")) {
-        $createShim = $true
-        $isGui = $true
-    }
-    # Rule 2: Executables in Compilers directory get shims as console applications
-    elseif ($exeDir -eq $compilersDir) {
-        $createShim = $true
-    }
-    
-    # Apply the appropriate files based on rules
-    if ($createShim) {
+    if (Test-Path $fullPath) {
+        # Create .gui or .ignore files based on configuration
         if ($isGui) {
-            # Create a .gui file for GUI applications
-            New-Item "$exePath.gui" -Type File -Force | Out-Null
-            Write-Host "Creating GUI shim for $exeName"
+            New-Item "$fullPath.gui" -Type File -Force | Out-Null
+            Write-Host "Creating GUI shim for $baseName"
         } else {
-            Write-Host "Creating console shim for $exeName"
+            Write-Host "Creating console shim for $baseName"
         }
         
-        # Only manually create shims when using a custom location
+        # For custom locations, also create manual shims
         if ($usingCustomLocation) {
-            Install-BinFile -Name $baseName -Path $exePath
+            Install-BinFile -Name $baseName -Path $fullPath
             Write-Host "Created manual shim for $baseName using Install-BinFile"
             $manualShimCount++
         }
         
         $shimCount++
     } else {
-        # Create a .ignore file to prevent shimming
+        Write-Warning "File $fullPath not found, skipping shim creation"
+    }
+}
+
+# Now identify and mark all other executables with .ignore to prevent shimming
+Write-Host "Finding all other executables in the installation directory..."
+$allExes = Get-ChildItem $inform7InstallDir -Include *.exe -Recurse
+foreach ($exe in $allExes) {
+    $exePath = $exe.FullName
+    $relativePath = $exePath.Substring($inform7InstallDir.Length + 1)
+    
+    # If this file is not in our configured shim list, ignore it
+    if (-not $Inform7ShimFiles.ContainsKey($relativePath)) {
         New-Item "$exePath.ignore" -Type File -Force | Out-Null
-        Write-Host "Preventing shim for $exeName"
+        Write-Host "Preventing shim for $relativePath"
         $ignoreCount++
     }
 }
@@ -148,3 +141,4 @@ if ($usingCustomLocation) {
 Write-Host $summaryMessage
 
 Write-Output "Inform 7 installation completed successfully."
+ 

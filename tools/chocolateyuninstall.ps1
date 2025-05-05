@@ -9,6 +9,10 @@
 # 6. Performs final cleanup operations
 
 $ErrorActionPreference = 'Stop'
+$toolsDir = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)"
+
+# Import shared configuration
+. (Join-Path $toolsDir "inform7-config.ps1")
 
 # Locate the application's uninstaller through registry entries
 $softwareName = 'Inform *'
@@ -39,15 +43,10 @@ if ($key.Count -eq 1) {
 }
 
 # Clean up any manual shims created with Install-BinFile
-# These need to be cleaned up especially for custom installations
 Write-Host "Removing manual shims..."
-$binFilesToRemove = @(
-    "Inform",
-    "inform7",
-    "inform6",
-    "inblorb",
-    "intest"
-)
+
+# Get the base names of all shimmed files from the configuration
+$binFilesToRemove = Get-Inform7ShimBaseNames
 
 foreach ($binFile in $binFilesToRemove) {
     try {
@@ -59,8 +58,8 @@ foreach ($binFile in $binFilesToRemove) {
     }
 }
 
-# Let Chocolatey handle automatic shim removal
-Write-Host "Chocolatey will automatically remove standard shims during uninstallation..."
+# Let Chocolatey handle shim removal automatically
+Write-Host "Chocolatey will automatically remove shims during uninstallation..."
 
 # Clean up environment variables created during installation
 Write-Host "Removing Inform 7 environment variables..."
