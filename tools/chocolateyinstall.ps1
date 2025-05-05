@@ -1,7 +1,7 @@
 ﻿# Inform 7 Installation Script
 # 
 # This script performs the following operations:
-# 1. Determines the installation location based on user parameters or defaults
+# 1. Determines the installation location based on package parameters or defaults
 # 2. Downloads and installs Inform 7 application
 # 3. Sets environment variables to allow integration with other tools
 # 4. Configures selective shimming to ensure only executables in the root and
@@ -12,12 +12,12 @@ $toolsDir = "$(Split-Path -Parent $MyInvocation.MyCommand.Definition)"
 $url = 'https://github.com/ganelson/inform/releases/download/v10.1.2/Inform_10_1_2_Windows.zip'
 $setupName = 'Inform_10_1_2_Windows.exe'
 
-# Determine installation location based on user parameters or Chocolatey defaults
+# Get package parameters to determine installation location
 $pp = Get-PackageParameters
 
-if ($pp.ContainsKey('D')) {
-    $inform7InstallDir = $pp['D']
-    Write-Host "Using user-specified installation directory: $inform7InstallDir"
+if ($pp.InstallLocation) {
+    $inform7InstallDir = $pp.InstallLocation
+    Write-Host "Using package parameter specified installation directory: $inform7InstallDir"
 } else {
     $packagePath = Get-ChocolateyPath PackagePath
     $inform7InstallDir = $packagePath
@@ -42,7 +42,7 @@ $packageArgs = @{
 
     checksum       = '4DC80A37CF9DE1C0FFA9FD4B9E9BAD93479E844D4A1BE19DAC17BEC38BE63CBA'
     checksumType   = 'sha256'
-    silentArgs     = "/S /D=$inform7InstallDir"
+    silentArgs     = "/S /D=$inform7InstallDir"  # For NSIS, /D= must be the last parameter
     validExitCodes = @(0) 
 }
 
