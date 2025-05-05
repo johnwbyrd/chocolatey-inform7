@@ -9,7 +9,7 @@
     <title>Inform</title>
     <authors>Graham Nelson et al</authors>
     <projectUrl>https://github.com/ganelson/inform</projectUrl>
-    <copyright>Graham Nelson 2006-2022</copyright>
+    <copyright>Graham Nelson 2006-2022. Windows front end by David Kinder.</copyright>
     <licenseUrl>https://raw.githubusercontent.com/ganelson/inform/refs/heads/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <projectSourceUrl>https://github.com/ganelson/inform/</projectSourceUrl>
@@ -28,15 +28,26 @@
       Created in April 2006, it was open-sourced in April 2022.
 
       This Chocolatey package includes additional features to improve usability, especially in
-      automated builds and continuous integration/continuous deployment projects:
+      automated builds and continuous integration/continuous deployment projects.
 
-      - **Command-Line Access**: Automatically creates shims for the Inform compiler tools
+      - **Command-Line access**: Automatically creates shims for the Inform compiler tools
       (`inform7.exe`, `inform6.exe`, `inblorb.exe`, and `intest.exe`), as well as the Inform IDE
       (`inform.exe`), allowing you to run them from any command prompt.
 
-      - **Environment Variables**: Sets `INFORM7_HOME` pointing to the Inform installation directory
+      - **Environment variables**: Sets `INFORM7_HOME` pointing to the Inform installation directory
       and `INFORM7_INTERNAL` pointing to the Internal directory, making it easier to integrate with
       other tools and scripts.
+
+      - **Overridable installation location**: By default, the package installs to
+      `C:\ProgramData\chocolatey\lib\inform7`, but this can be overridden by passing the
+      `--ia "/D=C:\your\install\path" options to choco install:
+
+      `choco install inform7 --ia "/D=C:\your\install\path"`
+
+      - **Windows front end**: The package also installs the Windows front end, Inform for Windows,
+      written by David Kinder. This is a simple GUI front end that makes it easier to work with
+      Inform projects on Windows. This can be run via selecting the Inform application from the
+      Start menu, or by running `inform.exe` from the command line.
     </description>
   </metadata>
   <files>

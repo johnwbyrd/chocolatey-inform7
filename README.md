@@ -25,10 +25,10 @@ choco install inform7
 With custom installation directory:
 
 ```powershell
-choco install inform7 --params "'/D:C:\custom\path'"
+choco install inform7 --ia "'/D:C:\custom\path'"
 ```
 
-If no directory is specified, Chocolatey will install Inform 7 to the default tools location, typically `$env:ChocolateyToolsLocation\Inform`.
+If no directory is specified, Chocolatey will install Inform 7 to the default Chocolatey location, typically `$env:ChocolateyToolsLocation\inform7`.
 
 ## Usage
 
@@ -57,11 +57,12 @@ echo %INFORM7_INTERNAL%
 
 ## Development Guide
 
-### Prerequisites
+### Development Prerequisites
 
 - CMake 3.14 or higher
-- Chocolatey installed
+- Chocolatey
 - PowerShell
+- Ninja
 
 ### Administrator Rights
 
@@ -74,6 +75,9 @@ Start your development environment with admin rights:
 1. Right-click on your editor/IDE
 2. Select "Run as administrator"
 3. Confirm the UAC prompt
+
+Alternatively, use cmake at a command prompt with administrator rights for development and
+testing.
 
 ### Development Workflow
 
@@ -92,6 +96,7 @@ cmake --build build --target test_package
 # - choco_install: Install locally
 # - choco_uninstall: Remove package
 # - push: Publish to Chocolatey.org
+# - all_tests: Run the entire build/install/uninstall/push cycle
 ```
 
 ### Updating for New Releases

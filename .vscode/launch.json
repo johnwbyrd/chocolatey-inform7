@@ -5,7 +5,7 @@
             "name": "Clean and Set Up Build Environment",
             "type": "PowerShell",
             "request": "launch",
-            "script": "if (Test-Path -Path 'build') { Remove-Item -Path 'build' -Recurse -Force; Write-Host 'Removed existing build directory' -ForegroundColor Yellow }; New-Item -ItemType Directory -Path 'build' -Force | Out-Null; cmake -B build",
+            "script": "if (Test-Path -Path 'build') { Remove-Item -Path 'build' -Recurse -Force; Write-Host 'Removed existing build directory' -ForegroundColor Yellow }; New-Item -ItemType Directory -Path 'build' -Force | Out-Null; cmake -B build -G Ninja",
             "cwd": "${workspaceFolder}", 
             "presentation": {
                 "clear": true
@@ -15,7 +15,7 @@
             "name": "Build Package",
             "type": "PowerShell",
             "request": "launch",
-            "script": "cmake --build build --target pack",
+            "script": "cmake --build build --target pack -G Ninja",
             "cwd": "${workspaceFolder}",
             "presentation": {
                 "clear": true

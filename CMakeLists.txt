@@ -22,7 +22,7 @@ set(PACKAGE_FILE "${CMAKE_BINARY_DIR}/${PACKAGE_NAME}.${PACKAGE_VERSION}.nupkg")
 add_custom_target(pack
     COMMAND ${CHOCO_EXECUTABLE} pack --outputdirectory="${CMAKE_BINARY_DIR}"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Building the Chocolatey package"
+    COMMENT "Build the Chocolatey package"
     VERBATIM
 )
 
@@ -34,7 +34,7 @@ add_custom_target(verify
             -DPACKAGE_FILE=${PACKAGE_FILE}
             -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/VerifyPackage.cmake
     DEPENDS pack
-    COMMENT "Verifying package validity"
+    COMMENT "Verify package validity"
     VERBATIM
 )
 
@@ -43,7 +43,7 @@ add_custom_target(choco_install
     COMMAND ${CHOCO_EXECUTABLE} install ${PACKAGE_NAME} -dv -s "${CMAKE_BINARY_DIR}"
     DEPENDS verify
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    COMMENT "Installing the package locally"
+    COMMENT "Build and install the package locally"
     VERBATIM
 )
 
@@ -51,21 +51,21 @@ add_custom_target(choco_install
 add_custom_target(choco_uninstall
     COMMAND ${CHOCO_EXECUTABLE} uninstall ${PACKAGE_NAME} -dv
     DEPENDS choco_install
-    COMMENT "Uninstalling the package"
+    COMMENT "Build, install, and uninstall the package"
     VERBATIM
 )
 
 # Uninstall package without building dependencies  
 add_custom_target(choco_uninstall_no_dependencies
     COMMAND ${CHOCO_EXECUTABLE} uninstall ${PACKAGE_NAME} -dv
-    COMMENT "Uninstalling the package"
+    COMMENT "Uninstall the package without building or installing it first"
     VERBATIM
 )
 
 # Testing target for CI - executes the full test cycle without pushing
 add_custom_target(test_package
     DEPENDS choco_install choco_uninstall
-    COMMENT "Testing the package (build→verify→install→uninstall)"
+    COMMENT "Test the package (build→verify→install→uninstall)"
     VERBATIM
 )
 
@@ -78,7 +78,7 @@ add_custom_target(push
             -DCHOCOLATEY_API_KEY=${CHOCOLATEY_API_KEY}
             -P ${CMAKE_CURRENT_SOURCE_DIR}/cmake/PushPackage.cmake
     DEPENDS test_package
-    COMMENT "Pushing package to Chocolatey.org"
+    COMMENT "Push package to Chocolatey.org"
     VERBATIM
 )
 
